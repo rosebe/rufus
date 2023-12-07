@@ -45,10 +45,11 @@ typedef struct huft_t {
 	} v;
 } huft_t;
 
+/* gunzip_window size--must be a power of two, and
+ * at least 32K for zip's deflate method */
+#define GUNZIP_WSIZE BB_BUFSIZE
+
 enum {
-	/* gunzip_window size--must be a power of two, and
-	 * at least 32K for zip's deflate method */
-	GUNZIP_WSIZE = BB_BUFSIZE,
 	/* If BMAX needs to be larger than 16, then h and x[] should be ulg. */
 	BMAX = 16,	/* maximum bit length of any code (16 for explode) */
 	N_MAX = 288,	/* maximum number of codes in any set */
@@ -1029,7 +1030,7 @@ inflate_unzip_internal(STATE_PARAM transformer_state_t *xstate)
 	error_msg = "corrupted data";
 	if (setjmp(error_jmp)) {
 		/* Error from deep inside zip machinery */
-		bb_simple_error_msg("corrupted data");
+		bb_simple_error_msg("%s", error_msg);
 		n = -1;
 		goto ret;
 	}
@@ -1197,9 +1198,13 @@ static int check_header_gzip(STATE_PARAM transformer_state_t *xstate)
 	if (header.formatted.flags & 0x18) {
 		while (1) {
 			do {
+				/* None of our buffers should be larger than BB_BUFSIZE */
+				if (bytebuffer_offset > BB_BUFSIZE) {
+					bb_error_msg("buffer overflow");
+					return 0;
+				}
 				if (!top_up(PASS_STATE 1))
 					return 0;
-			// coverity[tainted_data]
 			} while (bytebuffer[bytebuffer_offset++] != 0);
 			if ((header.formatted.flags & 0x18) != 0x18)
 				break;
@@ -1272,7 +1277,7 @@ unpack_gz_stream(transformer_state_t *xstate)
 
 	n = inflate_unzip_internal(PASS_STATE xstate);
 	if (n < 0) {
-		total = (n == -ENOSPC)?xstate->mem_output_size_max:n;
+		total = (n == -ENOSPC) ? xstate->mem_output_size_max : n;
 		goto ret;
 	}
 	total += n;

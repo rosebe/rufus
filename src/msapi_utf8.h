@@ -6,7 +6,7 @@
  *
  * See also: https://utf8everywhere.org
  *
- * Copyright © 2010-2022 Pete Batard <pete@akeo.ie>
+ * Copyright © 2010-2023 Pete Batard <pete@akeo.ie>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -344,19 +344,19 @@ static __inline int DrawTextU(HDC hDC, LPCSTR lpText, int nCount, LPRECT lpRect,
 static __inline int GetWindowTextU(HWND hWnd, char* lpString, int nMaxCount)
 {
 	int ret = 0;
-	DWORD err = ERROR_INVALID_DATA;
+	DWORD err = ERROR_INVALID_PARAMETER;
+	if (lpString == NULL || nMaxCount < 1)
+		goto out;
 	// Handle the empty string as GetWindowTextW() returns 0 then
-	if ((lpString != NULL) && (nMaxCount > 0))
-		lpString[0] = 0;
-	// coverity[returned_null]
+	lpString[0] = 0;
 	walloc(lpString, nMaxCount);
 	ret = GetWindowTextW(hWnd, wlpString, nMaxCount);
 	err = GetLastError();
-	// coverity[var_deref_model]
-	if ( (ret != 0) && ((ret = wchar_to_utf8_no_alloc(wlpString, lpString, nMaxCount)) == 0) ) {
+	if ((ret != 0) && ((ret = wchar_to_utf8_no_alloc(wlpString, lpString, nMaxCount)) == 0))
 		err = GetLastError();
-	}
 	wfree(lpString);
+	lpString[nMaxCount - 1] = 0;
+out:
 	SetLastError(err);
 	return ret;
 }
@@ -716,6 +716,21 @@ static __inline DWORD GetModuleFileNameExU(HANDLE hProcess, HMODULE hModule, cha
 		err = GetLastError();
 	}
 	wfree(lpFilename);
+	SetLastError(err);
+	return ret;
+}
+
+static __inline DWORD GetFinalPathNameByHandleU(HANDLE hFile, char* lpszFilePath, DWORD cchFilePath, DWORD dwFlags)
+{
+	DWORD ret = 0, err = ERROR_INVALID_DATA;
+	walloc(lpszFilePath, cchFilePath);
+	ret = GetFinalPathNameByHandleW(hFile, wlpszFilePath, cchFilePath, dwFlags);
+	err = GetLastError();
+	if ((ret != 0)
+		&& ((ret = wchar_to_utf8_no_alloc(wlpszFilePath, lpszFilePath, cchFilePath)) == 0)) {
+		err = GetLastError();
+	}
+	wfree(lpszFilePath);
 	SetLastError(err);
 	return ret;
 }
@@ -1215,6 +1230,16 @@ static __inline BOOL MoveFileExU(const char* lpExistingFileName, const char* lpN
 	BOOL ret = MoveFileExW(wlpExistingFileName, wlpNewFileName, dwFlags);
 	wfree(lpNewFileName);
 	wfree(lpExistingFileName);
+	return ret;
+}
+
+static __inline BOOL CreateSymbolicLinkU(const char* lpSymlinkFileName, const char* lpTargetFileName, DWORD dwFlags)
+{
+	wconvert(lpSymlinkFileName);
+	wconvert(lpTargetFileName);
+	BOOL ret = CreateSymbolicLinkW(wlpSymlinkFileName, wlpTargetFileName, dwFlags);
+	wfree(lpTargetFileName);
+	wfree(lpSymlinkFileName);
 	return ret;
 }
 

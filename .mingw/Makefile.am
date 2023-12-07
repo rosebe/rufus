@@ -29,4 +29,3 @@ all: dwmapi-delaylib.lib version-delaylib.lib wintrust-delaylib.lib
 
 clean:
 	$(RM) -rf *.lib
-	

@@ -1,3 +1,66 @@
+o Version 4.3 (2023.10.19)
+    Add support for Rock Ridge symbolic links preservation when NTFS is used
+    Add an exception to enforce NTFS for Linux Mint's LMDE
+    Add an expert feature to restrict a Windows installation to S Mode
+    Fix persistence support for Debian 12 when booted in BIOS mode
+    Fix a regression that prevented the opening of .vhd images
+    Update UEFI:NTFS to report a more explicit error on bootmgr security issues
+    Improve the search for conflicting processes by running it in a background thread
+    Improve support for Slax Linux
+
+o Version 4.2 (2023.07.26)
+    Add detection and warning for UEFI revoked bootloaders (including ones revoked through SkuSiPolicy.p7b)
+    Add ZIP64 support, to extract .zip images that are larger than 4 GB
+    Add saving and restoring current drive to/from compressed VHDX image
+    Add saving and restoring current drive to/from compressed FFU (Full Flash Update) image [EXPERIMENTAL]
+    Fix a crash when trying to open Windows ISOs, with the MinGW compiled x86 32-bit version
+    Fix an issue where ISOs that contain a boot image with an 'EFI' label are not detected as bootable
+    Increase the ISO → ESP limit for Debian 12 netinst images
+    Ensure that the main partition size is aligned to the cluster size
+
+o Version 4.1 (2023.05.31)
+    Add timeouts on enumeration queries that may stall on some systems
+    Restore MS-DOS drive creation through the download of binaries from Microsoft
+    Update the log button icon
+    Fix UEFI:NTFS incompatibility with Windows Dev Kit 2023 platform
+    Fix more GRUB 'out of range pointer' errors with Ubuntu/Fedora when booting in BIOS mode
+
+o Version 4.0 (2023.04.26)
+    Fix persistent partition not working with Ubuntu 23.04
+    Fix out of range pointer error with Ubuntu 23.04 when booting in BIOS mode
+    Fix boot freeze with Ubuntu Studio when Secure Boot is enabled
+    Fix incorrect architecture detection when checking for updates
+    Fix a Windows Store application crash when processing GRUB bootloaders
+    Fix a Windows Store application crash when enumerating processes that contain a % sign
+    Fix a Windows Store application crash when using German localization
+    Note that the major version was bumped on account of:
+      - New versions of Rufus requiring Windows 8 or later
+      - New versions of Rufus defaulting to a 64-bit executable
+      - Old versions of Rufus potentially not being able to update properly
+
+o Version 3.22 (2023.03.25)
+    Add SHA-1 and SHA-256 x86 acceleration on CPUs that support it (courtesy of Jeffrey Walton)
+    Add an option to disable BitLocker device encryption in the Windows User Experience dialog
+    Add a cheat mode (Ctrl-P) to preserve the log between sessions
+    Fix potential media creation errors by forcing the unmount of stale WIM images
+    Fix potential access errors in ISO → ESP mode by forcing Large FAT32 formatting
+    Fix user-specified label not being preserved on error/cancel
+    Fix some large SSD devices being listed by default
+    Fix processing of Rock Ridge CE fields
+    Work around the use of Rock Ridge symbolic links for Linux firmware packages (Debian)
+    Remove the ISO download feature on Windows 7
+    Note: This is the last version of Rufus that can run on Windows 7
+
+o Version 3.21 (2022.11.28)
+    Allow the provision of an arbitrary local account username in the Windows User Experience dialog
+    Improve Windows version reporting from ISO/.wim
+    Update UEFI:NTFS' NTFS drivers to v1.4 and exFAT drivers to v1.9
+    Switch to remote download for nonstandard GRUB (Fedora 37, openSUSE Live, GeckoLinux)
+    Fix UEFI:NTFS partition not being set in MBR mode for ISOs with a >4GB file (UwUntu)
+    Fix GRUB support for Arch and derivatives, when a non FAT compliant label is used
+    Fix incorrect detection of GRUB with nonstandard prefixes
+    Fix tab order not working on the Windows User Experience dialog
+
 o Version 3.20 (2022.08.03)
     Enable applicable Windows User Experience options for Windows 10
     Remember last Windows User Experience selection between sessions

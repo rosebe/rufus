@@ -3,8 +3,28 @@ name: "CodeQL"
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - '.gitignore'
+      - '.gitattributes'
+      - 'res/**'
+      - '**.cmd'
+      - '**.md'
+      - '**.rc'
+      - '**.sh'
+      - '**.txt'
+      - '**.xml'
   pull_request:
     branches: [master]
+    paths-ignore:
+      - '.gitignore'
+      - '.gitattributes'
+      - 'res/**'
+      - '**.cmd'
+      - '**.md'
+      - '**.rc'
+      - '**.sh'
+      - '**.txt'
+      - '**.xml'
 
 env:
   SOLUTION_FILE_PATH: ./rufus.sln
@@ -20,7 +40,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
